@@ -1,4 +1,4 @@
-# config
+# nconf-camel-cased
 
 This is useful for when the env-keys need to be nested and still camel cased.
 For example:
