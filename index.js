@@ -1,8 +1,9 @@
 'use strict'
 
 const camelCase = require('camel-case')
+const _nconf = new WeakMap()
 
-module.exports = class Config {
+class Config {
   constructor (options) {
     options = options || { file: {}, env: {} }
 
@@ -17,18 +18,25 @@ module.exports = class Config {
       file: 'config.json'
     }, options.file)
 
-    this.nconf = require('nconf').env(env).file(file)
+    _nconf.set(this, require('nconf').env(env).file(file))
   }
 
   set defaults (defaults) {
-    this.nconf.defaults(defaults)
+    const nconf = _nconf.get(this)
+
+    nconf.defaults(defaults)
   }
 
-  config (key) {
+  get (key) {
     function changeCase (keys) {
-      if (keys === null || typeof keys !== 'object') {
-        return {}
+      if (keys === null) {
+        return null
       }
+
+      if (typeof keys !== 'object') {
+        return keys
+      }
+
       return Object.keys(keys).reduce((object, key) => {
         const value = keys[key]
         const identfier = camelCase(key)
@@ -41,6 +49,8 @@ module.exports = class Config {
       }, {})
     }
 
-    return changeCase(this.nconf.get(key))
+    return changeCase(_nconf.get(this).get(key))
   }
 }
+
+module.exports = options => new Config(options)
