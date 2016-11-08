@@ -2,6 +2,33 @@
 
 const camelCase = require('camel-case')
 const _nconf = new WeakMap()
+const _defaults = new WeakMap()
+
+function isObject (item) {
+  return item && typeof item === 'object' && !Array.isArray(item)
+}
+
+function mergeDeep (target, source) {
+  if (!isObject(target) || !isObject(source)) {
+    return target
+  }
+
+  for (const key in source) {
+    if (isObject(source[key])) {
+      if (!target[key]) {
+        Object.assign(target, {
+          [key]: {}
+        })
+      }
+
+      mergeDeep(target[key], source[key])
+    } else {
+      Object.assign(target, { [key]: source[key] })
+    }
+  }
+
+  return target;
+}
 
 class Config {
   constructor (options) {
@@ -21,10 +48,37 @@ class Config {
     _nconf.set(this, require('nconf').env(env).file(file))
   }
 
-  set defaults (defaults) {
-    const nconf = _nconf.get(this)
+  changeCase (keys) {
+    if (keys === null) {
+      return null
+    }
 
-    nconf.defaults(defaults)
+    if (typeof keys !== 'object') {
+      return keys
+    }
+
+    if (Array.isArray(keys)) {
+      return keys.map(key => this.changeCase(key))
+    }
+
+    return Object.keys(keys).reduce((object, key) => {
+      const value = keys[key]
+      const identfier = camelCase(key)
+      if (typeof value !== 'object') {
+        object[identfier] = value;
+      } else {
+        object[identfier] = this.changeCase(value)
+      }
+      return object
+    }, {})
+  }
+
+  set defaults (defaults) {
+    _defaults.set(this, mergeDeep(_defaults.get(this) || {}, defaults))
+  }
+
+  get defaults () {
+    return _defaults
   }
 
   get (key) {
@@ -35,6 +89,10 @@ class Config {
 
       if (typeof keys !== 'object') {
         return keys
+      }
+
+      if (Array.isArray(keys)) {
+        return keys.map(key => changeCase(key))
       }
 
       return Object.keys(keys).reduce((object, key) => {
@@ -49,7 +107,7 @@ class Config {
       }, {})
     }
 
-    return changeCase(_nconf.get(this).get(key))
+    return mergeDeep(changeCase(changeCase(_defaults.get(this)), _nconf.get(this).get(key)))
   }
 }
 
