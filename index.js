@@ -74,7 +74,8 @@ class Config {
   }
 
   set defaults (defaults) {
-    _defaults.set(this, mergeDeep(_defaults.get(this) || {}, defaults))
+    const nconf = require('nconf').defaults(defaults)
+    _defaults.set(this, nconf)
   }
 
   get defaults () {
@@ -107,7 +108,7 @@ class Config {
       }, {})
     }
 
-    return mergeDeep(changeCase(changeCase(_defaults.get(this)), _nconf.get(this).get(key)))
+    return mergeDeep(changeCase(changeCase(_defaults.get(this).get(key)), _nconf.get(this).get(key)))
   }
 }
 
