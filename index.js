@@ -1,6 +1,7 @@
 'use strict'
 
 const camelCase = require('camel-case')
+const constantCase = require('constant-case')
 const _nconf = new WeakMap()
 const _defaults = new WeakMap()
 
@@ -30,6 +31,31 @@ function mergeDeep (target, source) {
   return target;
 }
 
+function changeCase (keys) {
+  if (keys === null) {
+    return null
+  }
+
+  if (typeof keys !== 'object') {
+    return keys
+  }
+
+  if (Array.isArray(keys)) {
+    return keys.map(key => changeCase(key))
+  }
+
+  return Object.keys(keys).reduce((object, key) => {
+    const value = keys[key]
+    const identfier = camelCase(key)
+    if (typeof value !== 'object') {
+      object[identfier] = value;
+    } else {
+      object[identfier] = changeCase(value)
+    }
+    return object
+  }, {})
+}
+
 class Config {
   constructor (options) {
     options = options || { file: {}, env: {} }
@@ -48,33 +74,10 @@ class Config {
     _nconf.set(this, require('nconf').env(env).file(file))
   }
 
-  changeCase (keys) {
-    if (keys === null) {
-      return null
-    }
-
-    if (typeof keys !== 'object') {
-      return keys
-    }
-
-    if (Array.isArray(keys)) {
-      return keys.map(key => this.changeCase(key))
-    }
-
-    return Object.keys(keys).reduce((object, key) => {
-      const value = keys[key]
-      const identfier = camelCase(key)
-      if (typeof value !== 'object') {
-        object[identfier] = value;
-      } else {
-        object[identfier] = this.changeCase(value)
-      }
-      return object
-    }, {})
-  }
-
   set defaults (defaults) {
-    const nconf = require('nconf').defaults(defaults)
+    const modified = changeCase(defaults)
+
+    const nconf = require('nconf').defaults(modified)
     _defaults.set(this, nconf)
   }
 
@@ -83,33 +86,20 @@ class Config {
   }
 
   get (key) {
-    function changeCase (keys) {
-      if (keys === null) {
-        return null
-      }
+    const defaultMatch = mergeDeep(
+      changeCase(_defaults.get(this).get(key)),
+      changeCase(_nconf.get(this).get(key))
+    )
 
-      if (typeof keys !== 'object') {
-        return keys
-      }
-
-      if (Array.isArray(keys)) {
-        return keys.map(key => changeCase(key))
-      }
-
-      return Object.keys(keys).reduce((object, key) => {
-        const value = keys[key]
-        const identfier = camelCase(key)
-        if (typeof value !== 'object') {
-          object[identfier] = value;
-        } else {
-          object[identfier] = changeCase(value)
-        }
-        return object
-      }, {})
-    }
-
-    return mergeDeep(changeCase(changeCase(_defaults.get(this).get(key)), _nconf.get(this).get(key)))
+    const modifiedKey = constantCase(`${key}`)
+    const modifiedMatch = mergeDeep(
+      changeCase(_defaults.get(this).get(modifiedKey)),
+      changeCase(_nconf.get(this).get(modifiedKey))
+    )
+    
+    return modifiedMatch || defaultMatch
   }
 }
 
 module.exports = options => new Config(options)
+
