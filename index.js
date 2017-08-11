@@ -28,7 +28,7 @@ function mergeDeep (target, source) {
     }
   }
 
-  return target;
+  return target
 }
 
 function changeCase (keys) {
@@ -56,6 +56,23 @@ function changeCase (keys) {
   }, {})
 }
 
+function nconfDefaults (env, file) {
+  const nconf = require('nconf')
+
+  if (!file) {
+    return nconf.env(env).get()
+  }
+
+  if (env.whitelist || env.match) {
+    nconf.env({
+      whitelist: env.whitelist,
+      match: env.match
+    })
+  }
+
+  return nconf.file(file).get()
+}
+
 class Config {
   constructor (options) {
     options = options || { file: {}, env: {} }
@@ -65,19 +82,30 @@ class Config {
       lowerCase: true
     }, options.env)
 
-    const file = Object.assign({
-      search: true,
-      dir: '../',
-      file: 'config.json'
-    }, options.file)
+    const file = typeof options.file === 'string'
+      ? options.file
+      : Object.assign({
+        search: true,
+        dir: '../',
+        file: 'config.json'
+      }, options.file)
 
-    _nconf.set(this, require('nconf').env(env).file(file))
+    const nconf = require('nconf').env(env).file(file)
+
+    _nconf.set(this, nconf)
+
+    this.defaults  = mergeDeep(
+      changeCase(nconfDefaults(env)),
+      changeCase(nconfDefaults(env, file))
+    )
   }
 
   set defaults (defaults) {
+    const nconf = require('nconf')
     const modified = changeCase(defaults)
 
-    const nconf = require('nconf').defaults(modified)
+    nconf.defaults(modified)
+
     _defaults.set(this, nconf)
   }
 
@@ -86,17 +114,20 @@ class Config {
   }
 
   get (key) {
+    const modifiedKey = key
+      .split(':')
+      .map(part => constantCase(part).toLowerCase())
+      .join(':')
+
     const defaultMatch = mergeDeep(
       changeCase(_defaults.get(this).get(key)),
       changeCase(_nconf.get(this).get(key))
     )
-
-    const modifiedKey = constantCase(`${key}`)
     const modifiedMatch = mergeDeep(
       changeCase(_defaults.get(this).get(modifiedKey)),
       changeCase(_nconf.get(this).get(modifiedKey))
     )
-    
+
     return modifiedMatch || defaultMatch
   }
 }

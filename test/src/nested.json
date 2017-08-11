@@ -1,0 +1,11 @@
+{
+  "bar": {
+    "bar": "bar__bar",
+    "barBaz": "bar__bar_baz"
+  },
+  "barBar": {
+    "baz": {
+      "zzBar": "bar_bar__baz__zz_bar"
+    }
+  }
+}
