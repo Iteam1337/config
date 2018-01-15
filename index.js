@@ -48,7 +48,7 @@ function changeCase (keys) {
     const value = keys[key]
     const identfier = camelCase(key)
     if (typeof value !== 'object') {
-      object[identfier] = value;
+      object[identfier] = value
     } else {
       object[identfier] = changeCase(value)
     }
@@ -94,7 +94,7 @@ class Config {
 
     _nconf.set(this, nconf)
 
-    this.defaults  = mergeDeep(
+    this.defaults = mergeDeep(
       changeCase(nconfDefaults(env)),
       changeCase(nconfDefaults(env, file))
     )
@@ -119,16 +119,13 @@ class Config {
       .map(part => constantCase(part).toLowerCase())
       .join(':')
 
-    const defaultMatch = mergeDeep(
+    return mergeDeep(mergeDeep(
       changeCase(_defaults.get(this).get(key)),
       changeCase(_nconf.get(this).get(key))
-    )
-    const modifiedMatch = mergeDeep(
+    ), mergeDeep(
       changeCase(_defaults.get(this).get(modifiedKey)),
       changeCase(_nconf.get(this).get(modifiedKey))
-    )
-
-    return modifiedMatch || defaultMatch
+    ))
   }
 }
 

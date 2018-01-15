@@ -1,6 +1,5 @@
 const chai = require('chai')
 const { expect } = chai
-const { stub } = require('sinon')
 chai.use(require('sinon-chai'))
 
 const file = `${process.cwd()}/test/src/one-level.json`

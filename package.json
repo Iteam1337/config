@@ -11,7 +11,7 @@
   "dependencies": {
     "camel-case": "3.0.0",
     "constant-case": "2.0.0",
-    "nconf": "0.8.4"
+    "nconf": "^0.10.0"
   },
   "devDependencies": {
     "chai": "^4.1.1",
