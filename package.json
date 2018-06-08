@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "camel-case": "3.0.0",
+    "camelcase": "^5.0.0",
     "constant-case": "2.0.0",
     "nconf": "^0.10.0"
   },
