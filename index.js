@@ -1,6 +1,6 @@
 'use strict'
 
-const camelCase = require('camel-case')
+const camelCase = require('camelcase')
 const constantCase = require('constant-case')
 const _nconf = new WeakMap()
 const _defaults = new WeakMap()
