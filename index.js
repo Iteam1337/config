@@ -82,13 +82,10 @@ class Config {
       lowerCase: true
     }, options.env)
 
-    const file = typeof options.file === 'string'
-      ? options.file
-      : Object.assign({
-        search: true,
-        dir: '../',
-        file: 'config.json'
-      }, options.file)
+    const file =
+      typeof options.file === 'string'
+        ? options.file
+        : Object.assign({ search: true, dir: '../', file: 'config.json' }, options.file)
 
     const nconf = require('nconf').env(env).file(file)
 
@@ -119,13 +116,23 @@ class Config {
       .map(part => constantCase(part).toLowerCase())
       .join(':')
 
-    return mergeDeep(mergeDeep(
+    const [
+      defaults,
+      nconfDefaults,
+      modified,
+      nconfModified
+    ] = [
       changeCase(_defaults.get(this).get(key)),
-      changeCase(_nconf.get(this).get(key))
-    ), mergeDeep(
+      changeCase(_nconf.get(this).get(key)),
       changeCase(_defaults.get(this).get(modifiedKey)),
       changeCase(_nconf.get(this).get(modifiedKey))
-    ))
+    ]
+
+    if (modified || nconfModified) {
+      return mergeDeep(modified, nconfModified)
+    }
+
+    return mergeDeep(defaults, nconfDefaults)
   }
 }
 
