@@ -1,15 +1,12 @@
-const chai = require('chai')
-const { expect } = chai
-chai.use(require('sinon-chai'))
+const { expect } = require('chai')
 
 const file = `${process.cwd()}/test/src/one-level.json`
+const nconf = require(`${process.cwd()}/src`)
 
 describe('one-level', () => {
-  let nconf
   let options
 
   beforeEach(() => {
-    nconf = require('../index')
     options = {
       env: {
         separator: '__',

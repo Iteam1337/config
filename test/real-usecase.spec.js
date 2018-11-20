@@ -1,15 +1,12 @@
-const chai = require('chai')
-const { expect } = chai
-chai.use(require('sinon-chai'))
+const { expect } = require('chai')
 
 const file = `${process.cwd()}/test/src/config.json`
+const nconf = require(`${process.cwd()}/src`)
 
 describe('real-usecase', () => {
-  let nconf
   let options
 
   beforeEach(() => {
-    nconf = require('../index')
     options = {
       file: {
         file,
@@ -26,7 +23,7 @@ describe('real-usecase', () => {
     process.env.CAMEL_CASED__FOO = 'hello'
     const config = nconf(options)
 
-    config.defaults =   {
+    config.defaults = {
       camelCased: {
         baseUrl: 'http://localhost:6666',
         registerRoute: '/create-account',

@@ -1,15 +1,12 @@
-const chai = require('chai')
-const { expect } = chai
-chai.use(require('sinon-chai'))
+const { expect } = require('chai')
 
 const file = `${process.cwd()}/test/src/nested.json`
+const nconf = require(`${process.cwd()}/src`)
 
 describe('nested', () => {
-  let nconf
   let options
 
   beforeEach(() => {
-    nconf = require('../index')
     options = {
       file: {
         file,
