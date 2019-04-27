@@ -1,4 +1,4 @@
-interface Args {
+declare interface Args {
   file?: {
     search?: boolean
     dir?: string
@@ -8,14 +8,14 @@ interface Args {
     separator?: string
     lowerCase?: boolean
   }
-  secrets?: false | { dir:? string, separator:? string } | string
+  secrets?: false | { dir?: string, separator?: string } | string
 }
 
-class Config {
+declare class Config {
   static isObject (item: any): boolean
   static mergeDeep (target: any, source: any): any
   static changeCase (keys: any): any
-  static nconfDefaults (env: Args.env, file: Args.file): any
+  static nconfDefaults (env: Args["env"], file: Args["file"]): any
   static file (): { search: true; dir: '../'; file: 'config.json' }
   static env (): { separator: '__'; lowerCase: true }
   static secrets (): { dir: '/run/secrets/'; separator: '__' }
@@ -23,10 +23,10 @@ class Config {
   defaults?: {
     [key: string]: any
   }
-  secrets?: Args.secrets
+  secrets?: Args["secrets"]
   get: <T>(value: string) => T
 }
 
-function nconf(args?: Args): Config
+declare function nconf(args?: Args): Config
 
 export = nconf
