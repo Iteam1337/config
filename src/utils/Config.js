@@ -3,6 +3,7 @@ const path = require('path')
 const dotProp = require('dot-prop')
 const identifier = require('./identifier')
 const changeCase = require('./changeCase')
+const { name } = require('../../package.json')
 
 const defaultEnv = () => ({
   separator: '__'
@@ -28,6 +29,22 @@ const optEnv = opt => {
   }
 }
 
+const findActualModule = object => {
+  if (!object || !object.id) {
+    return process.cwd()
+  }
+
+  if (`${object.id}`.includes(name)) {
+    if (!object.parent) {
+      return process.cwd()
+    }
+
+    return findActualModule(object.parent)
+  }
+
+  return object.filename
+}
+
 const optFile = opt => {
   if (typeof opt !== 'object' || !Object.keys(opt).length) {
     opt = defaultFile()
@@ -44,6 +61,10 @@ const optFile = opt => {
 
   if (typeof opt.dir !== 'string') {
     opt.dir = defaultFile().dir
+  }
+
+  if (abs(opt) === false && module.parent && opt.dir) {
+    opt.dir = path.join(path.dirname(findActualModule(module)), opt.dir)
   }
 
   if (!fs.existsSync(opt.dir)) {
@@ -89,11 +110,13 @@ const processFile = opt => {
   }
 
   const resolved = path.resolve(opt.dir, opt.file)
+
   if (!fs.existsSync(resolved)) {
     if (opt.search) {
       const found = traverse(opt.dir, path.basename(opt.file).toLowerCase())
+
       if (found) {
-        return parse(found)
+        return parse(fs.readFileSync(found))
       }
     }
   } else {
@@ -106,12 +129,13 @@ const processFile = opt => {
 const traverse = (dir, filename) => {
   for (const file of fs.readdirSync(dir)) {
     const resolved = path.resolve(dir, file)
+
     if (file === 'node_modules') {
       continue
     }
 
     if (file.toLowerCase() === filename) {
-      return file
+      return resolved
     }
 
     let stat
@@ -130,6 +154,26 @@ const traverse = (dir, filename) => {
       return found
     }
   }
+}
+
+const abs = ({ file, dir } = {}) => {
+  if (!file && !dir) {
+    return false
+  }
+
+  if (!dir) {
+    return path.isAbsolute(file)
+  }
+
+  if (file && dir) {
+    return path.isAbsolute(path.join(dir, file))
+  }
+
+  if (file) {
+    return path.isAbsolute(file)
+  }
+
+  return false
 }
 
 module.exports = class Config {
