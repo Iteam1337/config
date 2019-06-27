@@ -1,5 +1,5 @@
 const fs = require('fs')
-const camelCase = require('camel-case')
+const camelCase = require('camelcase')
 const dotProp = require('dot-prop')
 
 function getAll ({ dir = '/run/secrets/', separator = '__' }) {

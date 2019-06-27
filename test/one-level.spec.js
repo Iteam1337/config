@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 
 const file = `${process.cwd()}/test/src/one-level.json`
-const nconf = require(`${process.cwd()}/src`)
+const conf = require(`${process.cwd()}/src`)
 
 describe('one-level', () => {
   let options
@@ -9,22 +9,27 @@ describe('one-level', () => {
   beforeEach(() => {
     options = {
       env: {
-        separator: '__',
-        lowerCase: true,
-        match: /^foo/
+        separator: '__'
       },
-      file,
-      use: 'memory'
+      file
     }
   })
 
   it('works without calling "defaults" first', () => {
-    expect(nconf(options).get('fooBar')).to.eql('foo_bar')
+    expect(conf(options).get('fooBar')).to.eql('foo_bar')
   })
 
   it('handles env on first level', () => {
     process.env.FOO_VALUE = 'hello'
 
-    expect(nconf(options).get('fooValue')).to.eql('hello')
+    expect(conf(options).get('fooValue')).to.eql('hello')
+    delete process.env.FOO_VALUE
+  })
+
+  it('does not care about caseing', () => {
+    process.env.barBaz = 'barBaz'
+
+    expect(conf(options).get('bar_baz')).to.eql('barBaz')
+    delete process.env.barBaz
   })
 })

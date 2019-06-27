@@ -1,85 +1,16 @@
-const camelCase = require('camelcase')
-const constantCase = require('constant-case')
-
+const utils = require('./utils')
 const secrets = require('./secrets')
 
 module.exports = options => {
-  const _nconf = new WeakMap()
-  const _defaults = new WeakMap()
+  const _conf = new WeakMap()
+  const _confEnv = new WeakMap()
+  const _confFile = new WeakMap()
   const _secrets = new WeakMap()
 
   class Config {
-    static isObject (item) {
-      return item && typeof item === 'object' && !Array.isArray(item)
-    }
-
-    static mergeDeep (target, source) {
-      if (!Config.isObject(target) || !Config.isObject(source)) {
-        return target || source
-      }
-
-      for (const key in source) {
-        if (Config.isObject(source[key])) {
-          if (!target[key]) {
-            Object.assign(target, {
-              [key]: {}
-            })
-          }
-
-          Config.mergeDeep(target[key], source[key])
-        } else {
-          Object.assign(target, { [key]: source[key] })
-        }
-      }
-
-      return target
-    }
-
-    static changeCase (keys) {
-      if (keys === null) {
-        return null
-      }
-
-      if (typeof keys !== 'object') {
-        return keys
-      }
-
-      if (Array.isArray(keys)) {
-        return keys.map(key => Config.changeCase(key))
-      }
-
-      return Object.keys(keys).reduce((object, key) => {
-        const value = keys[key]
-        const identfier = camelCase(key)
-        if (typeof value !== 'object') {
-          object[identfier] = value
-        } else {
-          object[identfier] = Config.changeCase(value)
-        }
-        return object
-      }, {})
-    }
-
-    static nconfDefaults (env, file) {
-      const nconf = require('nconf')
-
-      if (!file) {
-        return nconf.env(env).get()
-      }
-
-      if (env.whitelist || env.match) {
-        nconf.env({
-          whitelist: env.whitelist,
-          match: env.match
-        })
-      }
-
-      return nconf.file(file).get()
-    }
-
     static file () {
       return {
-        search: true,
+        search: false,
         dir: '../',
         file: 'config.json'
       }
@@ -87,8 +18,7 @@ module.exports = options => {
 
     static env () {
       return {
-        separator: '__',
-        lowerCase: true
+        separator: '__'
       }
     }
 
@@ -99,28 +29,12 @@ module.exports = options => {
       }
     }
 
-    constructor (options = {
-      file: Config.file(),
-      env: Config.env(),
-      secrets: false
-    }) {
-      const env = Object.assign(Config.env(), options.env || {})
+    constructor ({ env = {}, file, secrets = false, defaults } = {}) {
+      this.env = env
+      this.file = typeof file === 'string' ? { file } : file
 
-      const file =
-        typeof options.file === 'string'
-          ? options.file
-          : Object.assign(Config.file(), options.file || {})
-
-      const nconf = require('nconf').env(env).file(file)
-
-      this.secrets = options.secrets
-
-      _nconf.set(this, nconf)
-
-      this.defaults = Config.mergeDeep(
-        Config.changeCase(Config.nconfDefaults(env)),
-        Config.changeCase(Config.nconfDefaults(env, file))
-      )
+      this.secrets = secrets || false
+      this.defaults = defaults
     }
 
     set secrets (options) {
@@ -131,51 +45,67 @@ module.exports = options => {
       const obj = secrets.getAll(
         typeof options === 'string'
           ? { dir: options }
-          : Config.mergeDeep(Config.secrets(), options || {})
+          : utils.mergeDeep(Config.secrets(), options)
       )
 
-      _secrets.set(this, obj)
+      _secrets.set(
+        this,
+        new utils.Config({
+          defaults: utils.changeCase(obj)
+        })
+      )
     }
 
-    set defaults (defaults) {
-      const nconf = require('nconf')
-      const modified = Config.changeCase(defaults)
+    set defaults (values = {}) {
+      const { env, file } = this
+      const defaults = utils.changeCase(values)
 
-      nconf.defaults(modified)
-
-      _defaults.set(this, nconf)
+      _conf.set(
+        this,
+        new utils.Config({
+          defaults
+        })
+      )
+      _confEnv.set(
+        this,
+        new utils.Config({
+          env
+        })
+      )
+      _confFile.set(
+        this,
+        new utils.Config({
+          file
+        })
+      )
     }
 
-    get (key) {
-      const modifiedKey = key
+    get (value) {
+      const { mergeDeep, changeCase, identifier } = utils
+
+      const key = value
         .split(':')
-        .map(part => constantCase(part).toLowerCase())
-        .join(':')
+        .map(part => identifier(part))
+        .join('.')
 
-      const privSecrets = _secrets.get(this)
-      const privDefaults = _defaults.get(this)
-      const privNconf = _nconf.get(this)
+      const _s = _secrets.get(this)
+      const _e = _confEnv.get(this)
+      const _f = _confFile.get(this)
+      const _d = _conf.get(this)
 
-      const [
-        defaults,
-        modified,
-        nconfModified
-      ] = [
-        Config.mergeDeep(
-          Config.changeCase(privDefaults.get(key)),
-          Config.changeCase(privNconf.get(key))
-        ),
-        Config.changeCase(privDefaults.get(modifiedKey)),
-        Config.changeCase(privNconf.get(modifiedKey))
+      const [env, file, defaults, secrets] = [
+        _e && _e.get ? _e.get(key) : undefined,
+        _f && _f.get ? _f.get(key) : undefined,
+        _d && _d.get ? _d.get(key) : undefined,
+        _s && _s.get ? _s.get(key) : undefined
       ]
 
-      const merged = (modified || nconfModified)
-        ? Config.mergeDeep(defaults, Config.mergeDeep(modified, nconfModified))
-        : defaults
+      const out = mergeDeep(defaults, mergeDeep(env, file))
 
-      return privSecrets
-        ? Config.mergeDeep(merged, secrets.get([key, modifiedKey], privSecrets))
-        : merged
+      return changeCase(
+        secrets ? mergeDeep(out, secrets) : out,
+        'camel'
+      )
     }
   }
 

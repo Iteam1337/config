@@ -13,11 +13,8 @@ describe('nested', () => {
         search: false
       },
       env: {
-        separator: '__',
-        lowerCase: true,
-        match: /^bar/
-      },
-      use: 'memory'
+        separator: '__'
+      }
     }
   })
 
