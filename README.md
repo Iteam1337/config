@@ -39,7 +39,7 @@ npm start # or whichever entrypoint
 
 ## simple usage
 ```javascript
-const config = require(PACKAGE_NAME)({
+const config = require('@iteam/config')({
   file: {
     dir: './'
   },
@@ -61,7 +61,7 @@ console.log(config.get('foo')) // > { bar: 'bar' }
 **defaults can be passed to the initial function-call**
 
 ```javascript
-const config = require(PACKAGE_NAME)({
+const config = require('@iteam/config')({
   defaults: {
     foo: {
       bar: 'bar'
@@ -97,7 +97,7 @@ When they are provided to the module they will be transformed as such:
 To enable this, provide `secrets` as a argument when calling the module:
 
 ```javascript
-const config = require(PACKAGE_NAME)({
+const config = require('@iteam/config')({
   secrets: {
     dir: '/run/secrets/'
   }
@@ -147,7 +147,3 @@ config.secrets = {
   file: string    // default: 'config.json'
 }
 ```
-
-## notes:
-
-- rewrote the module to not use `nconf` anymore
