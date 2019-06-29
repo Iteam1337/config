@@ -12,6 +12,70 @@ The order of how the config is beeing transformed is:
 So that means that `environment-variables` will override `defaults`, <br/>
 and the `config-file` will override `environment-variables` and so on.
 
+Properties defined in defaults will _almost always_ be returned, but overridden.
+
+For example:
+```javascript
+  defaults: {
+    foo: {
+      bar: 'baz',
+    }
+  }
+
+// application started with:
+// FOO__SOMETHING=else npm start
+
+console.log(config.get('foo')) // > { bar: 'baz', something: 'else' }
+console.log(config.get('foo:bar')) // > 'baz'
+console.log(config.get('foo:something')) // > 'else'
+```
+
+Types defined in `defaults` will be applied to overridden values:
+
+```json
+// contents of config.json
+{
+  "another": [{
+    "key": "not hello",
+    "value": "2",
+  }]
+}
+```
+
+```javascript
+const options = {
+  file: `${__dirname}/../config.json`,
+  defaults: {
+    some: {
+      nested: {
+        array: [ 1, 2, 3 ],
+      }
+    },
+    booleanValues: {
+      zero: false,
+      one: true
+    },
+    another: [{
+      key: 'hello',
+      value: 1,
+    }],
+  }
+}
+
+// ...
+
+// application started with:
+// SOME__NESTED__ARRAY="4,5,6" BOOLEAN_VALUES__ZERO="true" BOOLEAN_VALUES__ONE="0"
+config.get('some') // > { nested: { array: [ 4, 5, 6 ] } }
+config.get('some:nested') // > { array: [ 4, 5, 6 ] }
+config.get('some:nested:array') // > [ 4, 5, 6 ]
+config.get('booleanValues') // { zero: true, one: false }
+config.get('booleanValues:zero') // true
+config.get('booleanValues:one') // false
+config.get('another') // [{ key: 'not hello', value: 2 }]
+```
+
+
 **The casing is always ignored** *as an input*, but the values fetched will always be camel-cased.
 
 For example (starting application in **shell**):
@@ -31,7 +95,7 @@ npm start # or whichever entrypoint
       config: {
         inCamelCase: 'ok',
       },
-      secondValue: 'bar'
+      secondValue: 'bar',
     }
   }
 }
@@ -40,22 +104,22 @@ npm start # or whichever entrypoint
 ## simple usage
 ```javascript
 const config = require('@iteam/config')({
-  file: {
-    dir: './'
-  },
+  file: `${__dirname}/../config.json`,
   defaults: {
     foo: {
-      bar: 'bar'
+      bar: 'baz',
     },
-    baz: 'results'
+    baz: [ 1, 2, 3 ],
   }
 })
 
 // `config` also has a _getter_ for `defaults`
 // this will override the previous defaults
-config.defaults = { foo: { bar: 'bar' }, baz: 'results' }
+config.defaults = { foo: { bar: 'baz' }, baz: [ 1, 2, 3 ] }
 
-console.log(config.get('foo')) // > { bar: 'bar' }
+console.log(config.get('foo')) // > { bar: 'baz' }
+console.log(config.get('foo:bar')) // > 'baz'
+console.log(config.get('baz')) // > [ 1, 2, 3 ]
 ```
 
 **defaults can be passed to the initial function-call**
