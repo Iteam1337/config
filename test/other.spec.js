@@ -45,7 +45,9 @@ const genConfig = () =>
         hostname: ''
       },
       server: {
-        uploadLimit: '100mb'
+        uploadLimit: '100mb',
+        booleanValue: true,
+        otherBooleanValue: false
       },
       removePreviousImports: false,
       postgres: {
@@ -125,9 +127,13 @@ describe('other', () => {
     })
 
     it('should print the expected config (server)', () => {
+      process.env.SERVER__BOOLEAN_VALUE = 'false'
       expect(genConfig().get('server')).to.eql({
-        uploadLimit: '250mb'
+        uploadLimit: '250mb',
+        booleanValue: false,
+        otherBooleanValue: true
       })
+      delete process.env.SERVER__BOOLEAN_VALUE
     })
 
     it('should print the expected config (postgres)', () => {

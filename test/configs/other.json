@@ -32,7 +32,8 @@
     "port": "1433"
   },
   "server": {
-    "upload_limit": "250mb"
+    "upload_limit": "250mb",
+    "otherBooleanValue": "true"
   },
   "xmlPaths": ["/home/user/Documents/file.xml","/home/user/Documents/file_number_two.xml"]
 }

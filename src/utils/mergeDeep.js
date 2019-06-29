@@ -1,7 +1,9 @@
-const isObject = require('./isObject')
-module.exports = function mergeDeep (writeObject, toCopyFrom) {
+const isObject = require('./type/isObject')
+
+const mergeDeep = (writeObject, toCopyFrom) => {
   if (!isObject(toCopyFrom) && !isObject(writeObject)) {
-    return toCopyFrom || writeObject
+    return typeof toCopyFrom === 'undefined'
+      ? writeObject : toCopyFrom
   }
 
   if (isObject(toCopyFrom) && !isObject(writeObject)) {
@@ -14,7 +16,7 @@ module.exports = function mergeDeep (writeObject, toCopyFrom) {
 
   for (const key in toCopyFrom) {
     if (isObject(toCopyFrom[key])) {
-      if (!writeObject[key]) {
+      if (typeof writeObject[key] === 'undefined') {
         Object.assign(writeObject, {
           [key]: {}
         })
@@ -28,3 +30,5 @@ module.exports = function mergeDeep (writeObject, toCopyFrom) {
 
   return writeObject
 }
+
+module.exports = mergeDeep

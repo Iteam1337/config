@@ -1,18 +1,6 @@
 const utils = require('./utils')
 const secrets = require('./secrets')
 
-const copy = value => {
-  if (utils.isObject(value)) {
-    return Object.assign({}, value)
-  }
-
-  if (Array.isArray(value)) {
-    return Object.assign([], value)
-  }
-
-  return value
-}
-
 module.exports = options => {
   const _conf = new WeakMap()
   const _confEnv = new WeakMap()
@@ -93,7 +81,7 @@ module.exports = options => {
     }
 
     get (value) {
-      const { mergeDeep, changeCase, identifier } = utils
+      const { mergeDeep, changeCase, identifier, copy, isObject } = utils
 
       const key = value
         .split(':')
@@ -112,14 +100,25 @@ module.exports = options => {
         _s && _s.get ? _s.get(key) : undefined
       ]
 
-      const merged = copy(mergeDeep(copy(defaults), mergeDeep(copy(env), file)))
+      const merged = mergeDeep(copy(defaults), mergeDeep(copy(env), file))
 
       const out = changeCase(
-        secrets ? mergeDeep(merged, secrets) : merged,
+        secrets ? mergeDeep(copy(merged), secrets) : merged,
         'camel'
       )
 
-      return mergeDeep(out, utils.cast(out, changeCase(defaults, 'camel')))
+      const cast = utils.type.cast(out, changeCase(defaults, 'camel'))
+
+      if (
+        !isObject(out) &&
+        !isObject(cast) &&
+        !Array.isArray(out) &&
+        !Array.isArray(cast)
+      ) {
+        return cast
+      }
+
+      return mergeDeep(out, cast)
     }
   }
 

@@ -1,6 +1,6 @@
 const identifier = require('./identifier')
 
-module.exports = function changeCase (keys, casing = 'snake') {
+const changeCase = (keys, casing = 'snake') => {
   if (keys === null) {
     return null
   }
@@ -24,3 +24,5 @@ module.exports = function changeCase (keys, casing = 'snake') {
     return object
   }, {})
 }
+
+module.exports = changeCase

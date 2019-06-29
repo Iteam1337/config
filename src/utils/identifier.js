@@ -1,10 +1,10 @@
 const constant = require('constant-case')
 const camel = require('camelcase')
 
-const snake = key => {
-  return constant(`${key}`).toLowerCase()
-}
+const snake = key =>
+  constant(`${key}`).toLowerCase()
 
-module.exports = function identifier (key, casing = 'snake') {
-  return casing.toLowerCase() === 'snake' ? snake(key) : camel(key)
-}
+const identifier = (key, casing = 'snake') =>
+  casing.toLowerCase() === 'snake' ? snake(key) : camel(key)
+
+module.exports = identifier

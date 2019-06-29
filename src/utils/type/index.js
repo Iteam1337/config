@@ -1,5 +1,9 @@
+const mergeDeep = require('../mergeDeep')
+
 const isObject = require('./isObject')
-const mergeDeep = require('./mergeDeep')
+const castString = require('./castString')
+const toBoolean = require('./toBoolean')
+const toJSON = require('./toJSON')
 
 const toObjectLoose = (array, output, from, defaults) => {
   return array.reduce((object, key) => {
@@ -28,47 +32,6 @@ const toObject = (output, from, isStrict, defaults) => {
     toObjectLoose(Object.keys(from), output, from, defaults),
     toObjectLoose(Object.keys(output), output, from, defaults)
   )
-}
-
-const toJSON = content => {
-  if (isObject(content)) {
-    return content
-  }
-
-  try {
-    return JSON.parse(content)
-  } catch (_) {
-    return {}
-  }
-}
-
-const castString = string => {
-  const json = toJSON(string)
-
-  if (Array.isArray(json)) {
-    return json
-  }
-
-  if (isObject(json) && Object.keys(json).length) {
-    return [json]
-  }
-
-  return string
-    .split(',')
-    .map(value => value.trim())
-    .map(value => {
-      const json = toJSON(value)
-
-      if (Array.isArray(json)) {
-        return json
-      }
-
-      if (isObject(json) && Object.keys(json).length) {
-        return json
-      }
-
-      return value
-    })
 }
 
 const toArray = (output, from, isStrict) => {
@@ -111,9 +74,19 @@ const cast = (output, from, isStrict = true, defaults) => {
       return isNaN(converted) ? from : converted
     case 'string':
       return `${output}`
+    case 'boolean':
+      return toBoolean(output)
+    default:
+      return output
   }
-
-  return output
 }
 
-module.exports = cast
+module.exports = {
+  cast,
+  toArray,
+  toObject,
+  castString,
+  toBoolean,
+  toJSON,
+  isObject
+}

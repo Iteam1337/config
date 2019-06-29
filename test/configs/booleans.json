@@ -1,0 +1,16 @@
+{
+  "root": "true",
+  "rootCamel": true,
+  "nested": {
+    "boolean": false
+  },
+  "deep": {
+    "nested": {
+      "boolean": 1
+    }
+  },
+  "array": ["TRUE", "FALSE"],
+  "nestedArray": {
+    "booleans": [0, 1]
+  }
+}
