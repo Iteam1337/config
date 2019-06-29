@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 
-const file = `${process.cwd()}/test/src/secrets.json`
+const file = `${process.cwd()}/test/configs/secrets.json`
 const conf = require(`${process.cwd()}/src`)
 
 describe('secrets', () => {
@@ -64,7 +64,7 @@ describe('secrets', () => {
       ...options,
       defaults,
       secrets: {
-        dir: `${process.cwd()}/test/src/secrets`
+        dir: `${process.cwd()}/test/secrets`
       }
     })
 
@@ -78,7 +78,7 @@ describe('secrets', () => {
 
     const config = conf({
       ...options,
-      secrets: `${process.cwd()}/test/src/secrets`,
+      secrets: `${process.cwd()}/test/secrets`,
       defaults
     })
 
@@ -94,7 +94,7 @@ describe('secrets', () => {
       ...options,
       defaults,
       secrets: {
-        dir: `${process.cwd()}/test/src/secrets`
+        dir: `${process.cwd()}/test/secrets`
       }
     })
 
@@ -108,7 +108,7 @@ describe('secrets', () => {
 
     const config = conf({
       ...options,
-      secrets: `${process.cwd()}/test/src/secrets`,
+      secrets: `${process.cwd()}/test/secrets`,
       defaults
     })
 
@@ -122,7 +122,7 @@ describe('secrets', () => {
 
     const config = conf({
       ...options,
-      secrets: `${process.cwd()}/test/src/secrets`,
+      secrets: `${process.cwd()}/test/secrets`,
       defaults
     })
 

@@ -8,7 +8,7 @@ describe('real-usecase', () => {
   beforeEach(() => {
     options = {
       file: {
-        file: `${process.cwd()}/test/src/config.json`
+        file: `${process.cwd()}/test/configs/config.json`
       },
       env: {
         separator: '__'

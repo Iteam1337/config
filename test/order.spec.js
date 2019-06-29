@@ -3,7 +3,7 @@ const { expect } = require('chai')
 const conf = require(`${process.cwd()}/src`)
 
 describe('order', () => {
-  const file = `${process.cwd()}/test/src/order.json`
+  const file = `${process.cwd()}/test/configs/order.json`
 
   it('prints default (foo)', () => {
     delete process.env.GRAPHQL_PLAYGROUND
@@ -47,7 +47,7 @@ describe('order', () => {
         graphqlPlayground: 'foo'
       },
       secrets: {
-        dir: `${process.cwd()}/test/src/secrets`
+        dir: `${process.cwd()}/test/secrets`
       }
     })
 

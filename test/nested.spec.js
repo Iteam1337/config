@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 
-const file = `${process.cwd()}/test/src/nested.json`
+const file = `${process.cwd()}/test/configs/nested.json`
 const nconf = require(`${process.cwd()}/src`)
 
 describe('nested', () => {

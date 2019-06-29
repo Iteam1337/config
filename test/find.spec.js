@@ -8,7 +8,7 @@ describe('find', () => {
   beforeEach(() => {
     options = {
       file: {
-        dir: `${process.cwd()}/test/find`,
+        dir: `${process.cwd()}/test/configs/find`,
         search: true
       }
     }

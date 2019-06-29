@@ -1,6 +1,6 @@
 const { expect } = require('chai')
 
-const file = `${process.cwd()}/test/src/one-level.json`
+const file = `${process.cwd()}/test/configs/one-level.json`
 const conf = require(`${process.cwd()}/src`)
 
 describe('one-level', () => {

@@ -1,0 +1,38 @@
+{
+  "elastic": {
+    "from": "http://from_config.com",
+    "to": "http://from_config.se",
+    "indices": {
+      "nav": {
+        "from": "from_value",
+        "to": {
+          "alias": "to_alias",
+          "index": "to_index"
+        }
+      },
+      "content": {
+        "from": "from_value",
+        "to": {
+          "alias": "to_alias",
+          "index": "to_index"
+        }
+      }
+    },
+    "indexExports": ["first_index", "second_index"],
+    "navigation": "some_navigation"
+  },
+  "removePreviousImports": true,
+  "postgres": {
+    "user": "master",
+    "host": "localhost",
+    "database": "prod",
+    "port": "6543"
+  },
+  "express": {
+    "port": "1433"
+  },
+  "server": {
+    "upload_limit": "250mb"
+  },
+  "xmlPaths": ["/home/user/Documents/file.xml","/home/user/Documents/file_number_two.xml"]
+}

@@ -2,26 +2,31 @@
   "name": "@iteam/config",
   "version": "10.0.1",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Iteam1337/config.git"
+  },
+  "license": "ISC",
   "scripts": {
     "lint": "eslint 'src/**/*.js'",
     "test": "npm run lint && mocha test/*.spec.js --recursive"
   },
   "author": "Dennis Pettersson <dennis.pettersson@iteam.se>",
   "dependencies": {
-    "camelcase": "^5.3.1",
-    "constant-case": "^2.0.0",
-    "dot-prop": "^5.1.0"
+    "camelcase": "5.3.1",
+    "constant-case": "2.0.0",
+    "dot-prop": "5.1.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "eslint": "^6.0.1",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-node": "^9.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "mocha": "^6.1.4",
-    "sinon": "^7.3.2",
-    "sinon-chai": "^3.3.0"
+    "chai": "4.2.0",
+    "eslint": "6.0.1",
+    "eslint-config-standard": "12.0.0",
+    "eslint-plugin-import": "2.18.0",
+    "eslint-plugin-node": "9.1.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.0",
+    "mocha": "6.1.4",
+    "sinon": "7.3.2",
+    "sinon-chai": "3.3.0"
   }
 }
