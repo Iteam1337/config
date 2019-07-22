@@ -3,7 +3,7 @@ const path = require('path')
 const camelCase = require('camelcase')
 const dotProp = require('dot-prop')
 
-function getAll ({ dir = '/run/secrets/', separator = '__' }) {
+function getAll ({ dir = '/run/secrets/', separator = '__' } = {}) {
   if (!dir || !fs.existsSync(dir)) {
     return {}
   }
