@@ -1,16 +1,17 @@
-# config
+# Config
 
-This is useful for when the environment-variables need to be nested and <br/> still be camel cased.
+![npm (scoped)](https://img.shields.io/npm/v/@iteam/config)
 
-The order of how the config is beeing transformed is:
+This is useful when environment variables need to be nested and still be camel cased.
+The order of how the config is transformed is:
 
-- 0: defaults
-- 1: environment
-- 2: config-file
-- 3: secrets
+1. Defaults
+1. Environment
+1. Config file
+1. Secrets
 
-So that means that `environment-variables` will override `defaults`, <br/>
-and the `config-file` will override `environment-variables` and so on.
+That means that `environment variables` will override `defaults`, <br/>
+and the `config file` will override `environment variables` and so on.
 
 Properties defined in defaults will _almost always_ be returned, but overridden.
 
@@ -101,7 +102,7 @@ npm start # or whichever entrypoint
 }
 ```
 
-## simple usage
+## Simple usage
 ```javascript
 const config = require('@iteam/config')({
   file: `${__dirname}/../config.json`,
@@ -122,7 +123,7 @@ console.log(config.get('foo:bar')) // > 'baz'
 console.log(config.get('baz')) // > [ 1, 2, 3 ]
 ```
 
-**defaults can be passed to the initial function-call**
+**defaults can be passed to the initial function call**
 
 ```javascript
 const config = require('@iteam/config')({
@@ -135,11 +136,11 @@ const config = require('@iteam/config')({
 })
 ```
 
-## "secrets"
+## "Secrets"
 
 This module got extended with `docker-swarm` in mind, and their way of handling <br/> secrects (which is run-time mounted files).
 
-There's a option for the config-module to look into a directory and treat all <br/> files a key/value config.
+There's an option for the config module to look into a directory and treat all <br/> files a key/value config.
 
 For example:
 The directory `/run/secrets` has these file in it:
@@ -173,7 +174,7 @@ config.secrets = {
 }
 ```
 
-# arguments:
+## Arguments
 
 - **defaults** takes an `object`
 ```typescript
