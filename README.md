@@ -1,6 +1,6 @@
 # Config
 
-![npm (scoped)](https://img.shields.io/npm/v/@iteam/config)
+[![npm version](https://badge.fury.io/js/%40iteam%2Fconfig.svg)](https://badge.fury.io/js/%40iteam%2Fconfig)
 
 This is useful when environment variables need to be nested and still be camel cased.
 The order of how the config is transformed is:
