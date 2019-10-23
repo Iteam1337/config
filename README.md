@@ -19,3 +19,21 @@ or use [`supreme`](https://github.com/Iteam1337/supreme) to install and set up c
 ```
 npx @iteam/supreme add config
 ```
+
+## Simple usage
+
+```javascript
+const config = require('@iteam/config')({
+  file: `${__dirname}/../config.json`,
+  defaults: {
+    foo: {
+      bar: 'baz',
+    },
+    baz: [1, 2, 3],
+  },
+})
+
+config.get('foo') // { bar: 'baz' }
+config.get('foo:bar') // 'baz'
+config.get('baz') // [ 1, 2, 3 ]
+```
