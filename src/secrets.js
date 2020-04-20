@@ -12,6 +12,10 @@ function getAll ({ dir = '/run/secrets/', separator = '__' } = {}) {
     dir = `${dir}/`
   }
 
+  if (!fs.lstatSync(dir).isDirectory()) {
+    return {}
+  }
+
   const fileNames = fs.readdirSync(dir)
   const output = {}
 

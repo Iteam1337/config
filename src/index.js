@@ -1,6 +1,15 @@
+const fs = require('fs')
 const utils = require('./utils')
 const secrets = require('./secrets')
 const isDocker = require('is-docker')()
+
+const useSecrets = () => {
+  if (!isDocker) {
+    return false
+  }
+
+  return !fs.readFileSync('/proc/self/cgroup', 'utf8').includes('kubepods')
+}
 
 module.exports = options => {
   const _conf = new WeakMap()
@@ -30,7 +39,7 @@ module.exports = options => {
       }
     }
 
-    constructor ({ env = {}, file, secrets = isDocker ? Config.secrets() : false, defaults } = {}) {
+    constructor ({ env = {}, file, secrets = useSecrets() ? Config.secrets() : false, defaults } = {}) {
       this.env = env
       this.file = typeof file === 'string' ? { file } : file
 
