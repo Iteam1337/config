@@ -3,6 +3,37 @@ const utils = require('./utils')
 const secrets = require('./secrets')
 const isDocker = require('is-docker')()
 
+const Source = Object.freeze({
+  ENV: 'env',
+  FILE: 'file',
+  SECRETS: 'secrets',
+})
+
+const defaultResolutionOrder = () => [Source.ENV, Source.FILE, Source.SECRETS]
+
+const normalizeResolutionOrder = (sources = defaultResolutionOrder()) => {
+  if (!Array.isArray(sources)) {
+    throw new TypeError('resolutionOrder must be an array')
+  }
+
+  const allowedSources = Object.values(Source)
+  const normalized = sources.map((source) => {
+    if (!allowedSources.includes(source)) {
+      throw new TypeError(
+        `Unknown resolution source "${source}". Expected one of: ${allowedSources.join(', ')}`
+      )
+    }
+
+    return source
+  })
+
+  if (new Set(normalized).size !== normalized.length) {
+    throw new TypeError('resolutionOrder must not contain duplicate sources')
+  }
+
+  return normalized
+}
+
 const useSecrets = () => {
   if (!isDocker) {
     return false
@@ -11,7 +42,7 @@ const useSecrets = () => {
   return !fs.readFileSync('/proc/self/cgroup', 'utf8').includes('kubepods')
 }
 
-module.exports = (options) => {
+const createConfig = (options) => {
   const _conf = new WeakMap()
   const _confEnv = new WeakMap()
   const _confFile = new WeakMap()
@@ -39,12 +70,20 @@ module.exports = (options) => {
       }
     }
 
+    static resolutionOrder() {
+      return defaultResolutionOrder()
+    }
+
     constructor({
       env = {},
       file,
       secrets = useSecrets() ? Config.secrets() : false,
       defaults,
+      resolutionOrder = Config.resolutionOrder(),
     } = {}) {
+      this.resolutionOrder = Object.freeze(
+        normalizeResolutionOrder(resolutionOrder)
+      )
       this.env = env
       this.file = typeof file === 'string' ? { file } : file
 
@@ -53,7 +92,13 @@ module.exports = (options) => {
     }
 
     set secrets(options) {
+      if (!this.resolutionOrder.includes(Source.SECRETS)) {
+        _secrets.delete(this)
+        return
+      }
+
       if (!options) {
+        _secrets.delete(this)
         return
       }
 
@@ -83,15 +128,19 @@ module.exports = (options) => {
       )
       _confEnv.set(
         this,
-        new utils.Config({
-          env,
-        })
+        this.resolutionOrder.includes(Source.ENV)
+          ? new utils.Config({
+              env,
+            })
+          : undefined
       )
       _confFile.set(
         this,
-        new utils.Config({
-          file,
-        })
+        this.resolutionOrder.includes(Source.FILE)
+          ? new utils.Config({
+              file,
+            })
+          : undefined
       )
     }
 
@@ -115,12 +164,18 @@ module.exports = (options) => {
         _s && _s.get ? _s.get(key) : undefined,
       ]
 
-      const merged = mergeDeep(copy(defaults), mergeDeep(copy(env), file))
+      const merged = this.resolutionOrder.reduce((result, source) => {
+        switch (source) {
+          case Source.ENV:
+            return mergeDeep(result, copy(env))
+          case Source.FILE:
+            return mergeDeep(result, copy(file))
+          case Source.SECRETS:
+            return mergeDeep(result, copy(secrets))
+        }
+      }, copy(defaults))
 
-      const out = changeCase(
-        secrets ? mergeDeep(copy(merged), secrets) : merged,
-        'camel'
-      )
+      const out = changeCase(merged, 'camel')
 
       const cast = utils.type.cast(out, changeCase(defaults, 'camel'))
 
@@ -139,3 +194,7 @@ module.exports = (options) => {
 
   return new Config(options)
 }
+
+createConfig.Source = Source
+
+module.exports = createConfig

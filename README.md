@@ -37,3 +37,32 @@ config.get('foo') // { bar: 'baz' }
 config.get('foo:bar') // 'baz'
 config.get('baz') // [ 1, 2, 3 ]
 ```
+
+## Resolution order
+
+By default, configuration is resolved in this order:
+
+1. Defaults
+2. Environment
+3. Config file
+4. Secrets
+
+You can override the order of the optional sources with `resolutionOrder`.
+`defaults` are always included first.
+
+```javascript
+const configPackage = require('@iteam/config')
+
+const config = configPackage({
+  file: `${__dirname}/../config.json`,
+  defaults: {
+    graphqlPlayground: false
+  },
+  resolutionOrder: [
+    configPackage.Source.FILE,
+    configPackage.Source.ENV
+  ]
+})
+```
+
+Leaving a source out excludes it from resolution.
