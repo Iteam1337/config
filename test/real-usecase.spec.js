@@ -8,11 +8,11 @@ describe('real-usecase', () => {
   beforeEach(() => {
     options = {
       file: {
-        file: `${process.cwd()}/test/configs/config.json`
+        file: `${process.cwd()}/test/configs/config.json`,
       },
       env: {
-        separator: '__'
-      }
+        separator: '__',
+      },
     }
   })
 
@@ -24,16 +24,16 @@ describe('real-usecase', () => {
         camelCased: {
           baseUrl: 'http://localhost:6666',
           registerRoute: '/create-account',
-          resetPasswordRoute: '/reset-password'
-        }
-      }
+          resetPasswordRoute: '/reset-password',
+        },
+      },
     })
 
     expect(config.get('camelCased')).to.eql({
       baseUrl: 'http://localhost:4000',
       registerRoute: '/create-account',
       resetPasswordRoute: '/reset-password',
-      foo: 'hello'
+      foo: 'hello',
     })
   })
 })

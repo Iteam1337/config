@@ -10,28 +10,28 @@ describe('secrets', () => {
   beforeEach(() => {
     options = {
       file: {
-        file
+        file,
       },
       env: {
-        separator: '__'
-      }
+        separator: '__',
+      },
     }
 
     defaults = {
       foo: {
-        bar: 'defaults'
-      }
+        bar: 'defaults',
+      },
     }
   })
 
   it('prints default value', () => {
     delete process.env.FOO__bar
     const config = conf({
-      defaults
+      defaults,
     })
 
     expect(config.get('foo')).to.eql({
-      bar: 'defaults'
+      bar: 'defaults',
     })
   })
 
@@ -39,11 +39,11 @@ describe('secrets', () => {
     delete process.env.FOO__bar
     const config = conf({
       ...options,
-      defaults
+      defaults,
     })
 
     expect(config.get('foo')).to.eql({
-      bar: 'config'
+      bar: 'config',
     })
   })
 
@@ -53,7 +53,7 @@ describe('secrets', () => {
     const config = conf({ defaults })
 
     expect(config.get('foo')).to.eql({
-      bar: 'env'
+      bar: 'env',
     })
   })
 
@@ -64,12 +64,12 @@ describe('secrets', () => {
       ...options,
       defaults,
       secrets: {
-        dir: `${process.cwd()}/test/secrets`
-      }
+        dir: `${process.cwd()}/test/secrets`,
+      },
     })
 
     expect(config.get('foo')).to.eql({
-      bar: 'secrets'
+      bar: 'secrets',
     })
   })
 
@@ -79,11 +79,11 @@ describe('secrets', () => {
     const config = conf({
       ...options,
       secrets: `${process.cwd()}/test/secrets`,
-      defaults
+      defaults,
     })
 
     expect(config.get('foo')).to.eql({
-      bar: 'secrets'
+      bar: 'secrets',
     })
   })
 
@@ -94,12 +94,12 @@ describe('secrets', () => {
       ...options,
       defaults,
       secrets: {
-        dir: `${process.cwd()}/test/secrets`
-      }
+        dir: `${process.cwd()}/test/secrets`,
+      },
     })
 
     expect(config.get('foo')).to.eql({
-      bar: 'secrets'
+      bar: 'secrets',
     })
   })
 
@@ -109,11 +109,11 @@ describe('secrets', () => {
     const config = conf({
       ...options,
       secrets: `${process.cwd()}/test/secrets`,
-      defaults
+      defaults,
     })
 
     expect(config.get('foo')).to.eql({
-      bar: 'secrets'
+      bar: 'secrets',
     })
   })
 
@@ -123,11 +123,11 @@ describe('secrets', () => {
     const config = conf({
       ...options,
       secrets: `${process.cwd()}/test/secrets`,
-      defaults
+      defaults,
     })
 
     expect(config.get('helloWorld:cheese')).to.eql({
-      aKey: '0000 1000 0100'
+      aKey: '0000 1000 0100',
     })
   })
 })

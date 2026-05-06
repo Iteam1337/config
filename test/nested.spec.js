@@ -10,11 +10,11 @@ describe('nested', () => {
     options = {
       file: {
         file,
-        search: false
+        search: false,
       },
       env: {
-        separator: '__'
-      }
+        separator: '__',
+      },
     }
   })
 
@@ -29,8 +29,8 @@ describe('nested', () => {
     expect(nconf(options).get('barBar')).to.eql({
       baz: {
         foo: 'hello',
-        zzBar: 'bar_bar__baz__zz_bar'
-      }
+        zzBar: 'bar_bar__baz__zz_bar',
+      },
     })
   })
 })

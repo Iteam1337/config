@@ -9,8 +9,8 @@ describe('order', () => {
     delete process.env.GRAPHQL_PLAYGROUND
     const config = conf({
       defaults: {
-        graphqlPlayground: 'foo'
-      }
+        graphqlPlayground: 'foo',
+      },
     })
 
     expect(config.get('graphql_Playground')).to.eql('foo')
@@ -20,8 +20,8 @@ describe('order', () => {
     process.env.GRAPHQL_PLAYGROUND = 'bar'
     const config = conf({
       defaults: {
-        graphqlPlayground: 'foo'
-      }
+        graphqlPlayground: 'foo',
+      },
     })
 
     expect(config.get('graphqlPlayground')).to.eql('bar')
@@ -32,8 +32,8 @@ describe('order', () => {
     const config = conf({
       file: { file },
       defaults: {
-        graphqlPlayground: 'foo'
-      }
+        graphqlPlayground: 'foo',
+      },
     })
 
     config.defaults = expect(config.get('graphqlPlayground')).to.eql('baz')
@@ -44,11 +44,11 @@ describe('order', () => {
     const config = conf({
       file: { file },
       defaults: {
-        graphqlPlayground: 'foo'
+        graphqlPlayground: 'foo',
       },
       secrets: {
-        dir: `${process.cwd()}/test/secrets`
-      }
+        dir: `${process.cwd()}/test/secrets`,
+      },
     })
 
     expect(config.get('graphqlPlayground')).to.eql('secret')

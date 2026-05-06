@@ -11,35 +11,40 @@ const useSecrets = () => {
   return !fs.readFileSync('/proc/self/cgroup', 'utf8').includes('kubepods')
 }
 
-module.exports = options => {
+module.exports = (options) => {
   const _conf = new WeakMap()
   const _confEnv = new WeakMap()
   const _confFile = new WeakMap()
   const _secrets = new WeakMap()
 
   class Config {
-    static file () {
+    static file() {
       return {
         search: false,
         dir: '../',
-        file: 'config.json'
+        file: 'config.json',
       }
     }
 
-    static env () {
+    static env() {
       return {
-        separator: '__'
+        separator: '__',
       }
     }
 
-    static secrets () {
+    static secrets() {
       return {
         dir: '/run/secrets/',
-        separator: '__'
+        separator: '__',
       }
     }
 
-    constructor ({ env = {}, file, secrets = useSecrets() ? Config.secrets() : false, defaults } = {}) {
+    constructor({
+      env = {},
+      file,
+      secrets = useSecrets() ? Config.secrets() : false,
+      defaults,
+    } = {}) {
       this.env = env
       this.file = typeof file === 'string' ? { file } : file
 
@@ -47,7 +52,7 @@ module.exports = options => {
       this.defaults = defaults
     }
 
-    set secrets (options) {
+    set secrets(options) {
       if (!options) {
         return
       }
@@ -61,41 +66,41 @@ module.exports = options => {
       _secrets.set(
         this,
         new utils.Config({
-          defaults: utils.changeCase(obj)
+          defaults: utils.changeCase(obj),
         })
       )
     }
 
-    set defaults (values = {}) {
+    set defaults(values = {}) {
       const { env, file } = this
       const defaults = utils.changeCase(values)
 
       _conf.set(
         this,
         new utils.Config({
-          defaults
+          defaults,
         })
       )
       _confEnv.set(
         this,
         new utils.Config({
-          env
+          env,
         })
       )
       _confFile.set(
         this,
         new utils.Config({
-          file
+          file,
         })
       )
     }
 
-    get (value) {
+    get(value) {
       const { mergeDeep, changeCase, identifier, copy, isObject } = utils
 
       const key = value
         .split(':')
-        .map(part => identifier(part))
+        .map((part) => identifier(part))
         .join('.')
 
       const _s = _secrets.get(this)
@@ -107,7 +112,7 @@ module.exports = options => {
         _e && _e.get ? _e.get(key) : undefined,
         _f && _f.get ? _f.get(key) : undefined,
         _d && _d.get ? _d.get(key) : undefined,
-        _s && _s.get ? _s.get(key) : undefined
+        _s && _s.get ? _s.get(key) : undefined,
       ]
 
       const merged = mergeDeep(copy(defaults), mergeDeep(copy(env), file))

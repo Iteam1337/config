@@ -10,7 +10,7 @@ const changeCase = (keys, casing = 'snake') => {
   }
 
   if (Array.isArray(keys)) {
-    return keys.map(key => changeCase(key, casing))
+    return keys.map((key) => changeCase(key, casing))
   }
 
   return Object.keys(keys).reduce((object, key) => {

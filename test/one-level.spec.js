@@ -9,9 +9,9 @@ describe('one-level', () => {
   beforeEach(() => {
     options = {
       env: {
-        separator: '__'
+        separator: '__',
       },
-      file
+      file,
     }
   })
 

@@ -1,7 +1,7 @@
 const toJSON = require('./toJSON')
 const isObject = require('./isObject')
 
-const castString = string => {
+const castString = (string) => {
   const json = toJSON(string)
 
   if (Array.isArray(json)) {
@@ -14,8 +14,8 @@ const castString = string => {
 
   return string
     .split(',')
-    .map(value => value.trim())
-    .map(value => {
+    .map((value) => value.trim())
+    .map((value) => {
       const json = toJSON(value)
 
       if (Array.isArray(json)) {

@@ -2,8 +2,7 @@ const isObject = require('./type/isObject')
 
 const mergeDeep = (writeObject, toCopyFrom) => {
   if (!isObject(toCopyFrom) && !isObject(writeObject)) {
-    return typeof toCopyFrom === 'undefined'
-      ? writeObject : toCopyFrom
+    return typeof toCopyFrom === 'undefined' ? writeObject : toCopyFrom
   }
 
   if (isObject(toCopyFrom) && !isObject(writeObject)) {
@@ -18,7 +17,7 @@ const mergeDeep = (writeObject, toCopyFrom) => {
     if (isObject(toCopyFrom[key])) {
       if (typeof writeObject[key] === 'undefined') {
         Object.assign(writeObject, {
-          [key]: {}
+          [key]: {},
         })
       }
 

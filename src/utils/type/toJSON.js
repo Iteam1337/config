@@ -1,6 +1,6 @@
 const isObject = require('./isObject')
 
-const toJSON = content => {
+const toJSON = (content) => {
   if (isObject(content)) {
     return content
   }

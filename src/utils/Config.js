@@ -6,16 +6,16 @@ const changeCase = require('./changeCase')
 const { name } = require('../../package.json')
 
 const defaultEnv = () => ({
-  separator: '__'
+  separator: '__',
 })
 
 const defaultFile = () => ({
   search: false,
   dir: '../',
-  file: 'config.json'
+  file: 'config.json',
 })
 
-const optEnv = opt => {
+const optEnv = (opt) => {
   if (typeof opt !== 'object' || !Object.keys(opt).length) {
     opt = defaultEnv()
   }
@@ -25,11 +25,11 @@ const optEnv = opt => {
   }
 
   return {
-    separator: opt.separator
+    separator: opt.separator,
   }
 }
 
-const findActualModule = object => {
+const findActualModule = (object) => {
   if (!object || !object.id) {
     return process.cwd()
   }
@@ -45,7 +45,7 @@ const findActualModule = object => {
   return object.filename
 }
 
-const optFile = opt => {
+const optFile = (opt) => {
   if (typeof opt !== 'object' || !Object.keys(opt).length) {
     opt = defaultFile()
   }
@@ -78,11 +78,11 @@ const optFile = opt => {
   return {
     dir: opt.dir,
     file: opt.file,
-    search: opt.search
+    search: opt.search,
   }
 }
 
-const processEnv = opt => {
+const processEnv = (opt) => {
   const env = {}
 
   for (const key of Object.keys(process.env)) {
@@ -90,7 +90,7 @@ const processEnv = opt => {
       env,
       key
         .split(opt.separator)
-        .map(key => identifier(key))
+        .map((key) => identifier(key))
         .join('.'),
       process.env[key]
     )
@@ -99,8 +99,8 @@ const processEnv = opt => {
   return env
 }
 
-const processFile = opt => {
-  const parse = content => {
+const processFile = (opt) => {
+  const parse = (content) => {
     try {
       const json = JSON.parse(content)
       return changeCase(json)
@@ -177,7 +177,7 @@ const abs = ({ file, dir } = {}) => {
 }
 
 module.exports = class Config {
-  constructor ({ env, file, defaults } = {}) {
+  constructor({ env, file, defaults } = {}) {
     const object = {}
 
     if (defaults) {
@@ -198,7 +198,7 @@ module.exports = class Config {
     this.object = object
   }
 
-  get (key) {
+  get(key) {
     return dotProp.get(this.object, key)
   }
 }

@@ -21,7 +21,7 @@ describe('types', () => {
     process.env.TEST = 'foo,bar'
     expect(conf({ defaults: { test: ['hello'] } }).get('test')).to.eql([
       'foo',
-      'bar'
+      'bar',
     ])
   })
 
@@ -38,7 +38,7 @@ describe('types', () => {
   it('handles nested arrays with objects', () => {
     process.env.TEST = '{"foo":"baz"}'
     expect(conf({ defaults: { test: [{ foo: 'bar' }] } }).get('test')).to.eql([
-      { foo: 'baz' }
+      { foo: 'baz' },
     ])
   })
 
@@ -46,7 +46,7 @@ describe('types', () => {
     process.env.TEST = '[{"foo":"baz"},{"foo":1}]'
     expect(conf({ defaults: { test: [{ foo: 'bar' }] } }).get('test')).to.eql([
       { foo: 'baz' },
-      { foo: '1' }
+      { foo: '1' },
     ])
   })
 
@@ -54,7 +54,7 @@ describe('types', () => {
     process.env.TEST = '{"foo":"baz"},{"a":"b"}'
     expect(conf({ defaults: { test: [{ foo: 'bar' }] } }).get('test')).to.eql([
       { foo: 'baz' },
-      { a: 'b' }
+      { a: 'b' },
     ])
   })
 
@@ -80,19 +80,19 @@ describe('types', () => {
             world: [
               {
                 input: 'foo',
-                output: 0
-              }
-            ]
-          }
-        }
+                output: 0,
+              },
+            ],
+          },
+        },
       }).get('hello')
     ).to.eql({
       world: [
         {
           input: 'foo',
-          output: 0
-        }
-      ]
+          output: 0,
+        },
+      ],
     })
   })
 
@@ -105,19 +105,19 @@ describe('types', () => {
             world: [
               {
                 input: 'foo',
-                output: 0
-              }
-            ]
-          }
-        }
+                output: 0,
+              },
+            ],
+          },
+        },
       }).get('hello')
     ).to.eql({
       world: [
         {
           input: 'hey',
-          output: 1
-        }
-      ]
+          output: 1,
+        },
+      ],
     })
   })
 })

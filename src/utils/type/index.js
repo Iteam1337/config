@@ -69,9 +69,10 @@ const cast = (output, from, isStrict = true, defaults) => {
   }
 
   switch (typeof from) {
-    case 'number':
+    case 'number': {
       const converted = Number(output)
       return isNaN(converted) ? from : converted
+    }
     case 'string':
       return `${output}`
     case 'boolean':
@@ -88,5 +89,5 @@ module.exports = {
   castString,
   toBoolean,
   toJSON,
-  isObject
+  isObject,
 }

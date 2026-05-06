@@ -1,4 +1,4 @@
-const toBoolean = value => {
+const toBoolean = (value) => {
   if (typeof value === 'boolean') {
     return value
   }

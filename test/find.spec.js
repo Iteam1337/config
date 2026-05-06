@@ -9,8 +9,8 @@ describe('find', () => {
     options = {
       file: {
         dir: `${process.cwd()}/test/configs/find`,
-        search: true
-      }
+        search: true,
+      },
     }
   })
 

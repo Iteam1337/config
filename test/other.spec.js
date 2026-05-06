@@ -17,37 +17,37 @@ const genConfig = () =>
             from: 'structure_2019-04-09_08-10-38',
             to: {
               alias: 'structure',
-              index: 'structure_2019-04-09_08-10-38'
-            }
+              index: 'structure_2019-04-09_08-10-38',
+            },
           },
           content: {
             from: 'content_2019-04-09_08-10-38',
             to: {
               alias: 'content',
-              index: 'content_2019-04-09_08-10-38'
-            }
-          }
+              index: 'content_2019-04-09_08-10-38',
+            },
+          },
         },
         types: ['analyzer', 'mapping', 'data'],
         take: 20,
         indexExports: ['structure', 'content'],
-        navigation: 'structure'
+        navigation: 'structure',
       },
       redis: {
         port: 6379,
         host: '127.0.0.1',
         family: 4,
         password: '',
-        db: 0
+        db: 0,
       },
       express: {
         port: 1025,
-        hostname: ''
+        hostname: '',
       },
       server: {
         uploadLimit: '100mb',
         booleanValue: true,
-        otherBooleanValue: false
+        otherBooleanValue: false,
       },
       removePreviousImports: false,
       postgres: {
@@ -56,14 +56,14 @@ const genConfig = () =>
         database: 'ebre',
         host: 'localhost',
         port: 5432,
-        timeout: 30000
+        timeout: 30000,
       },
       xmlPaths: [''],
       elasticsearch: {
         host: 'localhost:9200',
-        log: 'error'
-      }
-    }
+        log: 'error',
+      },
+    },
   })
 
 describe('other', () => {
@@ -79,21 +79,21 @@ describe('other', () => {
             from: 'from_value',
             to: {
               alias: 'to_alias',
-              index: 'to_index'
-            }
+              index: 'to_index',
+            },
           },
           content: {
             from: 'from_value',
             to: {
               alias: 'to_alias',
-              index: 'to_index'
-            }
-          }
+              index: 'to_index',
+            },
+          },
         },
         take: 40,
         indexExports: ['first_index', 'second_index'],
         navigation: 'some_navigation',
-        types: ['analyzer', 'mapping', 'data']
+        types: ['analyzer', 'mapping', 'data'],
       })
 
       delete process.env.ELASTIC__TAKE
@@ -108,7 +108,7 @@ describe('other', () => {
         host: '127.0.0.1',
         family: 4,
         password: 'some password',
-        db: 40
+        db: 40,
       })
 
       delete process.env.REDIS__DB
@@ -120,7 +120,7 @@ describe('other', () => {
 
       expect(genConfig().get('express')).to.eql({
         port: 1433,
-        hostname: 'from_env'
+        hostname: 'from_env',
       })
 
       delete process.env.EXPRESS__HOSTNAME
@@ -131,7 +131,7 @@ describe('other', () => {
       expect(genConfig().get('server')).to.eql({
         uploadLimit: '250mb',
         booleanValue: false,
-        otherBooleanValue: true
+        otherBooleanValue: true,
       })
       delete process.env.SERVER__BOOLEAN_VALUE
     })
@@ -144,7 +144,7 @@ describe('other', () => {
         password: 'supersecret', // from secret
         port: 6543,
         timeout: 30000,
-        user: 'master'
+        user: 'master',
       })
 
       delete process.env.POSTGRES__PASSWORD
@@ -153,7 +153,7 @@ describe('other', () => {
     it('should print the expected config (xmlPaths)', () => {
       expect(genConfig().get('xmlPaths')).to.eql([
         '/home/user/Documents/file.xml',
-        '/home/user/Documents/file_number_two.xml'
+        '/home/user/Documents/file_number_two.xml',
       ])
     })
 
@@ -161,7 +161,7 @@ describe('other', () => {
       process.env.elasticsearch__log = 'debug'
       expect(genConfig().get('elasticsearch')).to.eql({
         host: 'localhost:9200',
-        log: 'debug'
+        log: 'debug',
       })
     })
   })

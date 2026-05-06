@@ -7,17 +7,17 @@ const gen = require('./helper/generate')({
   root: false,
   rootCamel: false,
   nested: {
-    boolean: true
+    boolean: true,
   },
   deep: {
     nested: {
-      boolean: false
-    }
+      boolean: false,
+    },
   },
   array: [false, true, true],
   nestedArray: {
-    booleans: [true, false]
-  }
+    booleans: [true, false],
+  },
 })
 
 describe('booleans', () => {
@@ -72,7 +72,7 @@ describe('booleans', () => {
     expect(gen({ secrets }).get('nested:boolean'), 'secret (1)').to.eql(false)
 
     expect(gen({ file, secrets }).get('nested'), 'file+secret').to.eql({
-      boolean: false
+      boolean: false,
     })
     expect(
       gen({ file, secrets }).get('nested:boolean'),
@@ -95,25 +95,25 @@ describe('booleans', () => {
     delete process.env.DEEP__NESTED__BOOLEAN
 
     expect(gen({ file }).get('deep'), 'file').to.eql({
-      nested: { boolean: true }
+      nested: { boolean: true },
     })
     expect(gen({ file }).get('deep:nested'), 'file (1)').to.eql({
-      boolean: true
+      boolean: true,
     })
     expect(gen({ file }).get('deep:nested:boolean'), 'file (2)').to.eql(true)
 
     expect(gen({ secrets }).get('deep'), 'secret').to.eql({
-      nested: { boolean: true }
+      nested: { boolean: true },
     })
     expect(gen({ secrets }).get('deep:nested'), 'secrets (1)').to.eql({
-      boolean: true
+      boolean: true,
     })
     expect(gen({ secrets }).get('deep:nested:boolean'), 'secrets (2)').to.eql(
       true
     )
 
     expect(gen({ file, secrets }).get('deep'), 'file+secret').to.eql({
-      nested: { boolean: true }
+      nested: { boolean: true },
     })
     expect(
       gen({ file, secrets }).get('deep:nested'),
@@ -143,7 +143,7 @@ describe('booleans', () => {
     expect(gen({ file, secrets }).get('array'), 'file+secret').to.eql([
       true,
       false,
-      true
+      true,
     ])
     delete process.env.ARRAY
   })
@@ -152,11 +152,11 @@ describe('booleans', () => {
     delete process.env.ARRAY
 
     expect(gen().get('nestedArray'), 'default').to.eql({
-      booleans: [true, false]
+      booleans: [true, false],
     })
     expect(gen().get('nestedArray:booleans'), 'default (1)').to.eql([
       true,
-      false
+      false,
     ])
 
     process.env.ARRAY = '[false]'
@@ -165,23 +165,23 @@ describe('booleans', () => {
 
     delete process.env.ARRAY
     expect(gen({ file }).get('nestedArray'), 'file').to.eql({
-      booleans: [false, true]
+      booleans: [false, true],
     })
     expect(gen({ file }).get('nestedArray:booleans'), 'file (1)').to.eql([
       false,
-      true
+      true,
     ])
 
     expect(gen({ secrets }).get('nestedArray'), 'secret').to.eql({
-      booleans: [false, true]
+      booleans: [false, true],
     })
     expect(gen({ secrets }).get('nestedArray:booleans'), 'secret (1)').to.eql([
       false,
-      true
+      true,
     ])
 
     expect(gen({ file, secrets }).get('nestedArray'), 'file+secret').to.eql({
-      booleans: [false, true]
+      booleans: [false, true],
     })
     expect(
       gen({ file, secrets }).get('nestedArray:booleans'),

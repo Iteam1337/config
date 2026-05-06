@@ -22,6 +22,7 @@ jobs:
         run: |
           npm ci
           npm run lint --if-present
+          npm run prettier
           npm test
         env:
           CI: true

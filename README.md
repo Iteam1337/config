@@ -27,10 +27,10 @@ const config = require('@iteam/config')({
   file: `${__dirname}/../config.json`,
   defaults: {
     foo: {
-      bar: 'baz',
+      bar: 'baz'
     },
-    baz: [1, 2, 3],
-  },
+    baz: [1, 2, 3]
+  }
 })
 
 config.get('foo') // { bar: 'baz' }

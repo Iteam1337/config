@@ -8,5 +8,5 @@ module.exports = {
   castString: require('./type/castString'),
   isObject: require('./type/isObject'),
   toBoolean: require('./type/toBoolean'),
-  toJSON: require('./type/toJSON')
+  toJSON: require('./type/toJSON'),
 }
