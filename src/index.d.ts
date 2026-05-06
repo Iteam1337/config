@@ -10,6 +10,7 @@ declare interface Args {
   defaults?: {
     [key: string]: any
   }
+  resolutionOrder?: Array<'env' | 'file' | 'secrets'>
   /**
    * Specify folder for where secrets are
    *
@@ -43,6 +44,7 @@ declare class Config {
   defaults?: {
     [key: string]: any
   }
+  resolutionOrder?: Args['resolutionOrder']
   secrets?: Args['secrets']
   get: <T>(value: string) => T
 }
@@ -60,5 +62,13 @@ declare class Config {
  * `foo_bar`, `fooBar`, `FOO_BAR` will be treated the same
  */
 declare function conf(args?: Args): Config
+
+declare namespace conf {
+  const Source: {
+    readonly ENV: 'env'
+    readonly FILE: 'file'
+    readonly SECRETS: 'secrets'
+  }
+}
 
 export = conf
