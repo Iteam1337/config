@@ -2,30 +2,34 @@ name: Release
 
 on:
   push:
-    branches: 
+    branches:
       - master
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
 
-    - name: Run tests and linting
-      run: |
-        npm install
-        npm run lint --if-present
-        npm test
-      env:
-        CI: true
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
 
-    - name: Create release using semantic-release
-      run: npx semantic-release
-      env:
-        # GITHUB_TOKEN is added automatically by GitHub
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        CI: true
+      - name: Run tests and linting
+        run: |
+          npm ci
+          npm run lint --if-present
+          npm test
+        env:
+          CI: true
+
+      - name: Create release using semantic-release
+        run: npx semantic-release
+        env:
+          # GITHUB_TOKEN is added automatically by GitHub
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          CI: true
