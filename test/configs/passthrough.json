@@ -1,0 +1,10 @@
+{
+  "logging": {
+    "config": {
+      "enabled": "false",
+      "adapter": {
+        "retry_count": "5"
+      }
+    }
+  }
+}

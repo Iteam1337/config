@@ -4,6 +4,7 @@ const isObject = require('./isObject')
 const castString = require('./castString')
 const toBoolean = require('./toBoolean')
 const toJSON = require('./toJSON')
+const { isPassthrough } = require('../passthrough')
 
 const toObjectLoose = (array, output, from, defaults) => {
   return array.reduce((object, key) => {
@@ -57,6 +58,10 @@ const toArray = (output, from, isStrict) => {
 
 const cast = (output, from, isStrict = true, defaults) => {
   if (typeof from === 'undefined' || from === null || output === 'undefined') {
+    return output
+  }
+
+  if (isPassthrough(from)) {
     return output
   }
 

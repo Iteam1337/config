@@ -69,6 +69,8 @@ declare namespace conf {
     readonly FILE: 'file'
     readonly SECRETS: 'secrets'
   }
+
+  function passthrough<T = any>(defaults?: T): T
 }
 
 export = conf

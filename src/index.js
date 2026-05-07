@@ -1,6 +1,7 @@
 const fs = require('fs')
 const utils = require('./utils')
 const secrets = require('./secrets')
+const { passthrough, isPassthrough } = require('./utils/passthrough')
 const isDocker = require('is-docker')()
 
 const Source = Object.freeze({
@@ -42,8 +43,75 @@ const useSecrets = () => {
   return !fs.readFileSync('/proc/self/cgroup', 'utf8').includes('kubepods')
 }
 
+const isObject = (value) => {
+  return value && typeof value === 'object' && !Array.isArray(value)
+}
+
+const decomposeDefaults = (values) => {
+  if (isPassthrough(values)) {
+    return {
+      defaults: values.defaults,
+      coercion: passthrough(),
+    }
+  }
+
+  if (Array.isArray(values)) {
+    return values.reduce(
+      (result, value) => {
+        const decomposed = decomposeDefaults(value)
+        result.defaults.push(decomposed.defaults)
+        result.coercion.push(decomposed.coercion)
+        return result
+      },
+      {
+        defaults: [],
+        coercion: [],
+      }
+    )
+  }
+
+  if (!isObject(values)) {
+    return {
+      defaults: values,
+      coercion: values,
+    }
+  }
+
+  return Object.keys(values).reduce(
+    (result, key) => {
+      const decomposed = decomposeDefaults(values[key])
+      result.defaults[key] = decomposed.defaults
+      result.coercion[key] = decomposed.coercion
+      return result
+    },
+    {
+      defaults: {},
+      coercion: {},
+    }
+  )
+}
+
+const getCoercion = (coercion, key) => {
+  let current = coercion
+
+  for (const part of key.split('.')) {
+    if (isPassthrough(current)) {
+      return current
+    }
+
+    if (typeof current === 'undefined' || current === null) {
+      return current
+    }
+
+    current = current[part]
+  }
+
+  return current
+}
+
 const createConfig = (options) => {
   const _conf = new WeakMap()
+  const _coercion = new WeakMap()
   const _confEnv = new WeakMap()
   const _confFile = new WeakMap()
   const _secrets = new WeakMap()
@@ -118,7 +186,9 @@ const createConfig = (options) => {
 
     set defaults(values = {}) {
       const { env, file } = this
-      const defaults = utils.changeCase(values)
+      const decomposed = decomposeDefaults(values)
+      const defaults = utils.changeCase(decomposed.defaults)
+      const coercion = utils.changeCase(decomposed.coercion)
 
       _conf.set(
         this,
@@ -126,6 +196,7 @@ const createConfig = (options) => {
           defaults,
         })
       )
+      _coercion.set(this, coercion)
       _confEnv.set(
         this,
         this.resolutionOrder.includes(Source.ENV)
@@ -156,6 +227,7 @@ const createConfig = (options) => {
       const _e = _confEnv.get(this)
       const _f = _confFile.get(this)
       const _d = _conf.get(this)
+      const _c = _coercion.get(this)
 
       const [env, file, defaults, secrets] = [
         _e && _e.get ? _e.get(key) : undefined,
@@ -177,7 +249,10 @@ const createConfig = (options) => {
 
       const out = changeCase(merged, 'camel')
 
-      const cast = utils.type.cast(out, changeCase(defaults, 'camel'))
+      const cast = utils.type.cast(
+        out,
+        changeCase(getCoercion(_c, key), 'camel')
+      )
 
       if (
         !isObject(out) &&
@@ -196,5 +271,6 @@ const createConfig = (options) => {
 }
 
 createConfig.Source = Source
+createConfig.passthrough = passthrough
 
 module.exports = createConfig

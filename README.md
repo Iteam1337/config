@@ -66,3 +66,29 @@ const config = configPackage({
 ```
 
 Leaving a source out excludes it from resolution.
+
+## Passthrough branches
+
+Use `passthrough()` when a branch should keep accepting whatever shows up below
+that path instead of using `defaults` as a coercion shape.
+
+```javascript
+const configPackage = require('@iteam/config')
+
+const config = configPackage({
+  defaults: {
+    logging: {
+      provider: 'graylog',
+      config: configPackage.passthrough({
+        enabled: true
+      })
+    }
+  }
+})
+```
+
+Below a `passthrough()` branch:
+
+1. Defaults still provide fallback values.
+2. Environment, config file, and secrets still merge as usual.
+3. Values are not coerced from the defaults shape.

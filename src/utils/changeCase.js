@@ -1,8 +1,13 @@
 const identifier = require('./identifier')
+const { isPassthrough } = require('./passthrough')
 
 const changeCase = (keys, casing = 'snake') => {
   if (keys === null) {
     return null
+  }
+
+  if (isPassthrough(keys)) {
+    return keys
   }
 
   if (typeof keys !== 'object') {
