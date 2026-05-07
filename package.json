@@ -11,7 +11,7 @@
     "prettier:fix": "prettier --write \"{src,test}/**/*.js\"",
     "prettier": "prettier --check \"{src,test}/**/*.js\"",
     "lint": "eslint \"src/**/*.js\"",
-    "test": "npm run lint && mocha \"test/*.spec.js\" --recursive"
+    "test": "npm run lint && mocha \"test/**/*.spec.js\""
   },
   "author": "Dennis Pettersson <dennis.pettersson@iteam.se>",
   "dependencies": {

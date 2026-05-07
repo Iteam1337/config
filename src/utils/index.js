@@ -4,6 +4,7 @@ module.exports = {
   copy: require('./copy'),
   identifier: require('./identifier'),
   mergeDeep: require('./mergeDeep'),
+  passthrough: require('./passthrough'),
   type: require('./type'),
   castString: require('./type/castString'),
   isObject: require('./type/isObject'),
